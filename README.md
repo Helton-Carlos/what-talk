@@ -1,8 +1,21 @@
-# React + Vite
+# REACT JS, TAILWIND CSS, REACT-BOOTSTRAP E BIBLIOTECAS ADICIONAIS.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**💬 About.** 
 
-Currently, two official plugins are available:
+WhatTalk aplicativo para conversa. React js, TailwindCss e bibliotecas adicionais.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**👇 Follow the steps.** 
+
+```bash
+git clone git@github.com:Helton-Carlos/what-talk.git
+```
+
+```bash
+npm install
+```
+
+```bash
+npm run dev
+```
+
+
