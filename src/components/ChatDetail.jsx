@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import Message from './Message';
 import RoundedBtn from './Common/RoundedBtn';
 import { messagesData } from '../data/whatsapp';
-import { TbArrowsRightLeft } from 'react-icons/tb';
+import { FaRegBuilding, FaHeadphonesAlt } from "react-icons/fa";
+import { MdClose } from "react-icons/md";
+import { TbArrowsRightLeft, TbLibraryPhoto } from 'react-icons/tb';
 import { MdSend } from 'react-icons/md';
 import { HiDotsVertical } from 'react-icons/hi';
 import { AiOutlineThunderbolt } from 'react-icons/ai';
 import { BsFillMicFill } from 'react-icons/bs';
-import { IoAddOutline } from 'react-icons/io5';
+import { IoAddOutline, IoDocumentTextSharp } from 'react-icons/io5';
 import { cs1, cs2 } from '../assets/whatsapp';
 import { getTime } from '../logic/whatsapp';
 import { HiOutlinePhoneXMark } from 'react-icons/hi2';
@@ -15,9 +17,31 @@ import { HiOutlinePhoneXMark } from 'react-icons/hi2';
 function ChatDetail() {
   const [messages, setMessages] = useState(messagesData);
   const [typing, setTyping] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const inputRef = useRef(null);
   const bottomRef = useRef(null);
+
+  const [isTransferCall, setIsTransferCall] = useState(false);
+  const [isCloseCall, setIsCloseCall] = useState(false);
+  const [isUserDots, setIsUserDots] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  
+  const transferCall = () => {
+    setIsTransferCall(!isTransferCall);
+  };
+  
+  const closeCall = () => {
+    setIsCloseCall(!isCloseCall);
+  };
+
+  const userDots = () => {
+    setIsUserDots(!isUserDots);
+  };
+
+  const uploadFile = () => {
+    setIsOpen(!isOpen);
+  };
 
   const addMessage = (msg) => {
     const newMessages = [...messages, msg];
@@ -31,6 +55,14 @@ function ChatDetail() {
       sent: true,
     });
   };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value?.toLowerCase());
+  };
+
+  const filteredMessages = messages.filter((msg) => 
+    msg && msg.msg && typeof msg.msg === 'string' && msg.msg.toLowerCase().includes(searchTerm)
+  );  
 
   const handleInputChange = () => {
     inputRef.current.value.length === 0 ? setTyping(false) : setTyping(true);
@@ -74,7 +106,7 @@ function ChatDetail() {
             className="rounded-full w-[45px] h-[45px] mr-5"
           />
           <div className="flex flex-col mr-4">
-            <h1 className="text-white font-medium font-custom">Coding Spot</h1>
+            <h1 className="text-white hover:text-gray-400 font-medium font-custom">Coding Spot</h1>
 
             <p className="text-[#8796a1] text-xs font-custom">(55519982985)</p>
           </div>
@@ -114,23 +146,204 @@ function ChatDetail() {
               />
             </svg>
           </div>
+          
           <input
             type="text"
             id="default-search"
-            className="rounded-lg bg-[#111B21] text-[#8796a1] text-sm font-light outline-none px-20 py-3 w-[344] h-[32px] placeholder:text-[#8796a1] placeholder:text-sm placeholder:font-light"
+            className="rounded-lg bg-[#111B21] text-white text-sm font-light outline-none px-20 py-3 w-[344px] h-[32px] placeholder:text-[#8796a1] placeholder:text-sm placeholder:font-light"
             placeholder="Search"
             required
+            value={searchTerm}  
+            onChange={handleSearchChange}
           />
         </div>
 
         <div className="flex justify-between items-center gap-5">
           <RoundedBtn
             icon={<TbArrowsRightLeft className="text-gray-300 size-5" />}
+            onClick={transferCall}
           />
+
+          {isTransferCall && (
+            <div 
+              className="w-[350px] bg-[#202d33] absolute z-10 top-5 right-10 mt-10 rounded-md text-center shadow-lg focus:outline-none"
+              role="menu" 
+              aria-orientation="vertical" 
+              aria-labelledby="user-menu-button"
+              id="dropdown-menu"
+            >
+              <p className='uppercase text-white py-5 px-4 text-xs font-medium'>
+                Transferir chamado
+              </p>
+
+              <form className="max-w-sm px-4 mx-auto">
+                <label htmlFor="categoria" className="block mb-2 text-sm text-left text-gray-200">Transferir para departamento</label> 
+                <div className="relative">
+                  <select id="categoria" name="categoria" className="block bg-[#202d33] w-full text-gray-200 pl-10 pr-3 py-1 border  rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    <option value="arte">Arte</option>
+                    <option value="plastica">Plástica</option>
+                  </select>
+
+                  <FaRegBuilding className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" /> 
+                </div>
+       
+                <label htmlFor="atendimento" className="block my-2 text-sm text-left text-gray-200">Transferir para atendimento</label> 
+                <div className="relative">
+                  <select id="atendimento" name="atendimento" className="block bg-[#202d33] w-full text-gray-200 pl-10 pr-3 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    <option value="daniel">Daniel</option>
+                    <option value="amanda">Amanda</option>
+                  </select>
+
+                  <FaHeadphonesAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" /> 
+                </div>
+
+                <label 
+                  htmlFor="message" 
+                  className="block my-2 text-sm text-left text-gray-200"
+                >
+                  Adicionar comentário
+                </label>
+                <textarea 
+                  id="message" 
+                  rows="4" 
+                  className="block bg-[#202d33] w-full text-gray-200 pl-2 py-1 mb-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500" 
+                  placeholder="Adicionar comentário" 
+                />
+
+                <div className='flex justify-center gap-4 my-4'>
+                  <button className='bg-[#747474] text-gray-800 px-4 py-1 rounded-full hover:bg-[#737f85] hover:text-gray-200'>
+                    Cancelar
+                  </button>
+
+                  <button className='bg-[#dadfe1] text-gray-800 px-4 py-1 rounded-full hover:bg-[#464e52] hover:text-gray-200'>
+                    Enviar
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
           <RoundedBtn
             icon={<HiOutlinePhoneXMark className="text-red-500 size-5" />}
+            onClick={closeCall}
           />
-          <RoundedBtn icon={<HiDotsVertical />} />
+
+          {isCloseCall && (
+            <div 
+              className="w-[227px] bg-[#202d33] absolute z-10 top-5 mt-10 rounded-md text-center shadow-lg focus:outline-none"
+              role="menu" 
+              aria-orientation="vertical" 
+              aria-labelledby="user-menu-button"
+              id="dropdown-menu"
+            >
+              <div className="relative top-2 flex justify-end text-white pt-1 pr-4">
+                <MdClose className='hover:cursor-pointer' onClick={closeCall} />
+              </div>
+
+              <p className='uppercase text-white py-8 px-4 text-xs font-medium'>
+                Deseja fechar o chamado
+              </p>
+
+              <div className="uppercase font-medium text-center text-xs text-white bg-black py-2 hover:cursor-pointer hover:bg-slate-700" onClick={closeCall}>
+                <p>
+                  Fechar
+                </p>
+              </div>
+            </div>
+          )}
+          
+          <RoundedBtn 
+            icon={<HiDotsVertical />}
+            onClick={userDots}
+          />
+
+          {isUserDots && (
+            <div 
+              className="w-[400px] h-screen bg-[#262c2e] text-white absolute z-10 top-0 right-0 rounded-md text-center shadow-lg focus:outline-none"
+              role="menu" 
+              aria-orientation="vertical" 
+              aria-labelledby="user-menu-button"
+              id="dropdown-menu"
+            >
+              <div className="relative my-2 top-2 flex justify-start items-center mt-4 mb-4 gap-2">
+                <RoundedBtn 
+                  icon={<MdClose className='hover:cursor-pointer' />}
+                  onClick={userDots}
+                />
+
+                <p className='uppercase text-white text-xs font-medium'>
+                  Dados do contato
+                </p>
+              </div>
+
+              <div className='bg-[#202d33] my-2 py-8 flex justify-center flex-col gap-4'>
+                <img
+                  src={cs1}
+                  alt="profile_picture"
+                  className="size-28 mx-auto rounded-full"
+                />
+
+                <h1 className="font-medium font-custom">Coding Spot</h1>
+                <p className="text-[#8796a1] text-xs font-custom">(55519982985)</p>
+              </div>
+
+              <div>
+                <h1 className="text-white font-medium font-custom my-2 py-4">CADASTRAR/EDITAR CLIENTE</h1>
+              </div>
+
+              <div className='bg-[#202d33] my-2 py-4'>
+                <h1 className="text-white font-medium font-custom">ÚLTIMOS PEDIDOS</h1>
+                <p>-------------------------------------------</p>
+
+                <div className='flex justify-center items-center gap-4 mt-2'>
+                  <span>#1435057</span> <span className='font-bold px-3 py-0.5 rounded-full border-2 border-sky-700'>cancelado</span>
+                </div>
+              </div>
+
+              <div className='bg-[#202d33] my-2 py-4 px-4'>
+                <h1 className="text-white font-medium font-custom text-left mb-4">Tags</h1>
+                <div className='p-2 my-2 rounded-sm border border-white'>
+                  <span id="badge-dismiss-default" className="inline-flex items-center px-2 py-1 me-2 text-sm font-medium text-gray-800 bg-gray-100 rounded">
+                    Juliene
+                    <button 
+                      type="button" 
+                      className="inline-flex items-center p-1 ms-2 text-sm text-gray-400 bg-transparent rounded-sm hover:bg-gray-200 hover:text-gray-900" 
+                      data-dismiss-target="#badge-dismiss-default" 
+                      aria-label="Remove"
+                    >
+                      <svg className="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                      </svg>
+                      <span className="sr-only">Remove badge</span>
+                    </button>
+                  </span>
+
+                  <span id="badge-dismiss-default" className="inline-flex items-center px-2 py-1 me-2 text-sm font-medium text-gray-800 bg-gray-100 rounded">
+                    Venda concluída
+                    <button 
+                      type="button" 
+                      className="inline-flex items-center p-1 ms-2 text-sm text-gray-400 bg-transparent rounded-sm hover:bg-gray-200 hover:text-gray-900" 
+                      data-dismiss-target="#badge-dismiss-default" 
+                      aria-label="Remove"
+                    >
+                      <svg className="w-2 h-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                      </svg>
+                      <span className="sr-only">Remove badge</span>
+                    </button>
+                  </span>
+                </div>
+
+                <h1 className="text-white font-medium font-custom text-left my-4">Atendente padrão para chamados</h1> 
+                <div>
+                  <select id="categoria" name="categoria" className="w-full block bg-[#202d33] text-gray-200 p-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    <option value="arte">Selecione</option>
+                    <option value="plastica">Plástica</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -138,25 +351,48 @@ function ChatDetail() {
         className="bg-[#0a131a] bg-[url('assets/images/bg.webp')] bg-contain overflow-y-scroll h-full"
         style={{ padding: '12px 7%' }}
       >
-        {messages &&
-          Array.isArray(messages) &&
-          messages.map((msg, index) => (
-            <Message
-              key={index}
-              msg={msg.msg}
-              time={msg.time}
-              isLink={msg.isLink}
-              img={msg.img}
-              sent={msg.sent}
-            />
-          ))}
+        {filteredMessages.map((msg, index) => (
+          <Message
+            key={index}
+            msg={msg.msg}
+            time={msg.time}
+            isLink={msg.isLink}
+            img={msg.img}
+            sent={msg.sent}
+          />
+        ))}
 
         <div ref={bottomRef} />
       </div>
 
       <div className=" w-full h-[70px] bg-[#202d33] flex items-center gap-2 py-2">
         <div className="flex items-center gap-2 mx-2">
-          <RoundedBtn icon={<IoAddOutline />} onClick={handleImgUpload} />
+          <RoundedBtn icon={
+            <IoAddOutline 
+              aria-expanded={isOpen ? "true" : "false"} 
+              aria-controls="dropdown-menu"
+            />} 
+
+            onClick={uploadFile} 
+          />
+
+          {isOpen && (
+            <div 
+              className="w-[170px] bg-[#202d33] absolute z-10 bottom-5 mb-10 rounded-md py-2 px-2 text-center shadow-lg focus:outline-none"
+              role="menu" 
+              aria-orientation="vertical" 
+              aria-labelledby="user-menu-button"
+              id="dropdown-menu"
+            >
+              <div className="flex items-center justify-center py-2 text-sm text-white hover:bg-black hover:text-gray-400 hover:cursor-pointer hover:rounded-full" role="menuitem" id="user-menu-item-0">
+                <IoDocumentTextSharp className="size-7 pr-2 text-[#8C32FF]" /> <span className="font-medium">Documentos</span> 
+              </div>
+
+              <div className="flex items-center justify-center py-2 text-sm text-white  hover:bg-black hover:text-gray-400 hover:cursor-pointer hover:rounded-full" role="menuitem" id="user-menu-item-1">
+                <TbLibraryPhoto className="size-7 pr-2 text-[#007BFC]" /> <span className="font-medium"> Fotos e vídeo</span>
+              </div>
+            </div>
+          )}
 
           <RoundedBtn
             icon={<AiOutlineThunderbolt />}
@@ -192,7 +428,7 @@ function ChatDetail() {
           ref={inputRef}
         />
 
-        <span className="ml-2">
+        <span className="mx-2">
           {typing ? (
             <RoundedBtn icon={<MdSend />} onClick={handleInputSubmit} />
           ) : (

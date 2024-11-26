@@ -28,7 +28,8 @@ function WhatsApp() {
         <div className="w-screen h-screen overflow-hidden">
           <div className="bg-[#111a21] h-screen flex justify-start whatsapp-bp:justify-center items-center">
             <LeftMessage />
-            <div className="w-full h-full min-w-[340px] max-w-[500px] bg-[#111a21]">
+
+            <div className="w-full h-full min-w-[340px] max-w-[440px] bg-[#111a21]">
               <Filter />
             </div>
 
