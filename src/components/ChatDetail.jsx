@@ -16,9 +16,9 @@ import { HiOutlinePhoneXMark } from 'react-icons/hi2';
 
 function ChatDetail() {
   const [messages, setMessages] = useState(messagesData);
-  const [typing, setTyping] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-
+  const [text, setText] = useState('');
+  const [typing, setTyping] = useState(false);
   const inputRef = useRef(null);
   const bottomRef = useRef(null);
 
@@ -64,20 +64,22 @@ function ChatDetail() {
     msg && msg.msg && typeof msg.msg === 'string' && msg.msg.toLowerCase().includes(searchTerm)
   );  
 
-  const handleInputChange = () => {
-    inputRef.current.value.length === 0 ? setTyping(false) : setTyping(true);
+  const handleInputSubmit = () => {
+    if (text.trim()) {
+      console.log('Texto enviado:', text);
+      setText('');
+    }
   };
 
-  const handleInputSubmit = () => {
-    if (inputRef.current.value.length > 0) {
-      addMessage({
-        msg: inputRef.current.value,
-        time: getTime(),
-        sent: true,
-      });
-      inputRef.current.value = '';
-      inputRef.current.focus();
-      setTyping(false);
+  const handleInputChange = (event) => {
+    setText(event.target.value);
+    setTyping(event.target.value.trim().length > 0); 
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault(); 
+      handleInputSubmit(); 
     }
   };
 
@@ -166,7 +168,7 @@ function ChatDetail() {
 
           {isTransferCall && (
             <div 
-              className="w-[350px] bg-[#202d33] absolute z-10 top-5 right-10 mt-10 rounded-md text-center shadow-lg focus:outline-none"
+              className="w-[350px] bg-[#202d33] absolute z-10 top-10 mt-5 rounded-md text-center shadow-lg focus:outline-none"
               role="menu" 
               aria-orientation="vertical" 
               aria-labelledby="user-menu-button"
@@ -424,10 +426,11 @@ function ChatDetail() {
           type="text"
           placeholder="Type a message"
           className="bg-[#2c3943] rounded-lg outline-none text-sm text-neutral-200 w-full h-full px-3 placeholder:text-sm placeholder:text-[#8796a1] my-3"
-          onChange={handleInputChange}
+          value={text} // Liga o input ao estado
+          onChange={handleInputChange} // Atualiza o estado conforme o usuário digita
+          onKeyDown={handleKeyDown} // Detecta o evento "Enter"
           ref={inputRef}
         />
-
         <span className="mx-2">
           {typing ? (
             <RoundedBtn icon={<MdSend />} onClick={handleInputSubmit} />
